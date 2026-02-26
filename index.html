@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GUOFUHEE CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* [SEU CSS ORIGINAL - NÃO MUDOU NADA] */
+        :root { --bg-dark: #001f33; --accent-green: #00d29d; --glow-green: rgba(0, 210, 157, 0.3); --white: #ffffff; }
+        body { font-family: 'Inter', sans-serif; background: #00111a; margin: 0; padding: 0; display: flex; justify-content: center; color: var(--white); overflow-x: hidden; }
+        .glow-1 { position: fixed; width: 300px; height: 300px; background: var(--accent-green); filter: blur(120px); border-radius: 50%; top: -100px; right: -100px; opacity: 0.2; z-index: 0; }
+        .glow-2 { position: fixed; width: 400px; height: 400px; background: #003a5d; filter: blur(100px); border-radius: 50%; bottom: -150px; left: -150px; opacity: 0.4; z-index: 0; }
+        .container { width: 100%; max-width: 600px; min-height: 100vh; background: rgba(0, 31, 51, 0.8); backdrop-filter: blur(20px); padding: 25px; box-sizing: border-box; position: relative; z-index: 1; border-left: 1px solid rgba(0, 210, 157, 0.2); border-right: 1px solid rgba(0, 210, 157, 0.2); }
+        .header-area { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .logo-dot { width: 12px; height: 12px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 15px var(--accent-green); }
+        h1 { font-size: 22px; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+        .menu { display: flex; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 4px; margin-bottom: 20px; }
+        .menu button { flex: 1; padding: 14px; border: none; cursor: pointer; border-radius: 12px; font-weight: 600; background: transparent; color: var(--white); font-size: 13px; transition: 0.3s; }
+        .menu button.active { background: var(--accent-green); color: #001f33; box-shadow: 0 0 15px var(--glow-green); }
+        .search-section { background: rgba(0, 210, 157, 0.05); padding: 15px; border-radius: 15px; margin-bottom: 20px; display: none; border: 1px solid var(--accent-green); }
+        label { display: block; font-size: 10px; font-weight: 700; color: var(--accent-green); text-transform: uppercase; margin-top: 15px; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.3); color: white; font-size: 16px; outline: none; box-sizing: border-box; }
+        input:focus { border-color: var(--accent-green); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-main { width: 100%; padding: 18px; background: transparent; color: var(--accent-green); border: 2px solid var(--accent-green); border-radius: 50px; margin-top: 30px; font-size: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { background: var(--accent-green); color: #001f33; box-shadow: 0 0 25px var(--accent-green); }
+        #status { text-align: center; margin-top: 20px; font-weight: 600; color: var(--accent-green); min-height: 20px; }
+        @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="glow-1"></div><div class="glow-2"></div>
+    <div class="container">
+        <div class="header-area"><div class="logo-dot"></div><h1>GUOFUHEE</h1></div>
+        
+        <div class="menu">
+            <button id="tabCad" class="active" onclick="toggleMode('create')">NOVO REGISTRO</button>
+            <button id="tabAtt" onclick="toggleMode('update')">ATUALIZAR OP</button>
+        </div>
+
+        <div id="searchBar" class="search-section">
+            <label>Localizar OP</label>
+            <input list="listaDeOPs" id="idBusca" placeholder="Ex: OP 05 ou Empresa...">
+            <datalist id="listaDeOPs"></datalist>
+            <button onclick="buscar()" class="btn-main" style="margin-top: 10px; padding: 10px;">BUSCAR</button>
+        </div>
+
+        <form id="formEmpresa">
+            <input type="hidden" name="action" id="actionInput" value="create">
+            <div class="grid">
+                <div><label>Opportunity ID</label><input type="text" name="id" id="f_id" readonly></div>
+                <div><label>Status</label>
+                    <select name="status" id="f_status">
+                        <option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal in Preparation">Proposal in Preparation</option><option value="Dealing">Dealing</option><option value="Won">Won</option><option value="Lost">Lost</option>
+                    </select>
+                </div>
+            </div>
+            <label>Company Name</label><input type="text" name="companyName" id="f_name" required>
+            <label>Priority</label>
+            <select name="priority" id="f_priority">
+                <option value="Urgente e Importante">Urgente e Importante</option><option value="Importante, não urgente">Importante, não urgente</option><option value="Urgente, não importante">Urgente, não importante</option><option value="Eliminar">Eliminar</option>
+            </select>
+            <div class="grid">
+                <div><label>Owner</label><input type="text" name="owner" id="f_owner"></div>
+                <div><label>Our group</label><input type="text" name="ourGroup" id="f_group"></div>
+            </div>
+            <div class="grid">
+                <div><label>State (UF)</label>
+                    <select name="state" id="f_state">
+                        <option value="">Selecione...</option><option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option><option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option><option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option><option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option><option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option><option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option><option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option><option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+                    </select>
+                </div>
+                <div><label>Segment</label><input type="text" name="segment" id="f_segment"></div>
+            </div>
+            <label>Business interest</label>
+            <select name="businessInterest" id="f_interest">
+                <option value="FAD HGS">FAD HGS</option><option value="FAD HRS">FAD HRS</option><option value="FAD HGS & HRS">FAD HGS & HRS</option>
+            </select>
+            <div class="grid">
+                <div><label>Estimated Value</label><input type="text" name="estimatedValue" id="f_value" oninput="formatarMoeda(this)"></div>
+                <div><label>Last Interaction</label><input type="date" name="lastInteraction" id="f_last"></div>
+            </div>
+            <div class="grid">
+                <div><label>Next Action</label><input type="text" name="nextAction" id="f_next"></div>
+                <div><label>Deadline</label><input type="date" name="deadline" id="f_deadline"></div>
+            </div>
+            <label>Drive's link</label><input type="url" name="driveLink" id="f_drive" placeholder="https://...">
+            <label>Note</label><textarea name="note" id="f_note" rows="3"></textarea>
+            <button type="submit" class="btn-main" id="btnSubmit">SALVAR NA PLANILHA</button>
+        </form>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // COLE SEU LINK AQUI
+        const WEB_APP_URL = "SEU_LINK_AQUI";
+
+        window.onload = function() { gerarIDAutomatico(); };
+
+        async function gerarIDAutomatico() {
+            const resp = await fetch(WEB_APP_URL + "?action=proxima");
+            const id = await resp.text();
+            document.getElementById('f_id').value = id;
+        }
+
+        function formatarMoeda(i) {
+            let v = i.value.replace(/\D/g,'');
+            v = (v/100).toFixed(2) + '';
+            v = v.replace(".", ",");
+            v = v.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
+            v = v.replace(/(\d)(\d{3}),/g, "$1.$2,");
+            i.value = "R$ " + v;
+        }
+
+        function toggleMode(mode) {
+            const isUpdate = mode === 'update';
+            document.getElementById('actionInput').value = mode;
+            document.getElementById('searchBar').style.display = isUpdate ? 'block' : 'none';
+            document.getElementById('tabAtt').className = isUpdate ? 'active' : '';
+            document.getElementById('tabCad').className = isUpdate ? '' : 'active';
+            if(!isUpdate) { document.getElementById('formEmpresa').reset(); gerarIDAutomatico(); } 
+            else { carregarLista(); }
+        }
+
+        async function carregarLista() {
+            const resp = await fetch(WEB_APP_URL + "?action=listar");
+            const list = await resp.json();
+            const dl = document.getElementById('listaDeOPs');
+            dl.innerHTML = list.map(item => `<option value="${item}">`).join('');
+        }
+
+        async function buscar() {
+            let val = document.getElementById('idBusca').value;
+            let id = val.includes(" - ") ? val.split(" - ")[0].trim() : val;
+            if(!id) return;
+            document.getElementById('status').innerText = "SINCRONIZANDO...";
+            const resp = await fetch(WEB_APP_URL + "?action=buscar&id=" + id);
+            const res = await resp.json();
+            if(res.found) {
+                document.getElementById('f_id').value = id;
+                document.getElementById('f_name').value = res.companyName || "";
+                document.getElementById('f_priority').value = res.priority || "";
+                document.getElementById('f_owner').value = res.owner || "";
+                document.getElementById('f_group').value = res.ourGroup || "";
+                document.getElementById('f_status').value = res.status || "Lead";
+                document.getElementById('f_state').value = res.state || "";
+                document.getElementById('f_segment').value = res.segment || "";
+                document.getElementById('f_interest').value = res.businessInterest || "";
+                document.getElementById('f_value').value = res.estimatedValue || "";
+                document.getElementById('f_last').value = res.lastInteraction || "";
+                document.getElementById('f_next').value = res.nextAction || "";
+                document.getElementById('f_deadline').value = res.deadline || "";
+                document.getElementById('f_drive').value = res.driveLink || "";
+                document.getElementById('f_note').value = res.note || "";
+                document.getElementById('status').innerText = "✅ DADOS CARREGADOS";
+            } else {
+                document.getElementById('status').innerText = "❌ OP NÃO ENCONTRADA";
+            }
+        }
+
+        document.getElementById('formEmpresa').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            document.getElementById('status').innerText = "SALVANDO...";
+            const dados = Object.fromEntries(new FormData(this).entries());
+            
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dados)
+                });
+                document.getElementById('status').innerText = "✅ SUCESSO!";
+                if(document.getElementById('actionInput').value === 'create') { 
+                    this.reset(); gerarIDAutomatico(); 
+                }
+            } catch(e) {
+                document.getElementById('status').innerText = "❌ ERRO AO SALVAR";
+            }
+            btn.disabled = false;
+        });
+    </script>
+</body>
+</html>
