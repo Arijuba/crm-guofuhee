@@ -7,37 +7,23 @@
     <title>GUOFUHEE CRM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --bg-dark: #001f33; 
-            --accent-green: #00d29d; 
-            --glow-green: rgba(0, 210, 157, 0.3); 
-            --white: #ffffff; 
-        }
+        :root { --bg-dark: #001f33; --accent-green: #00d29d; --glow-green: rgba(0, 210, 157, 0.3); --white: #ffffff; }
         body { font-family: 'Inter', sans-serif; background: #00111a; margin: 0; padding: 0; display: flex; justify-content: center; color: var(--white); overflow-x: hidden; }
         .glow-1 { position: fixed; width: 300px; height: 300px; background: var(--accent-green); filter: blur(120px); border-radius: 50%; top: -100px; right: -100px; opacity: 0.2; z-index: 0; }
         .glow-2 { position: fixed; width: 400px; height: 400px; background: #003a5d; filter: blur(100px); border-radius: 50%; bottom: -150px; left: -150px; opacity: 0.4; z-index: 0; }
-        
         .container { width: 100%; max-width: 600px; min-height: 100vh; background: rgba(0, 31, 51, 0.8); backdrop-filter: blur(20px); padding: 25px; box-sizing: border-box; position: relative; z-index: 1; border-left: 1px solid rgba(0, 210, 157, 0.2); border-right: 1px solid rgba(0, 210, 157, 0.2); }
-        
         .header-area { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
         .logo-dot { width: 12px; height: 12px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 15px var(--accent-green); }
         h1 { font-size: 22px; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-
         .menu { display: flex; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 4px; margin-bottom: 20px; }
         .menu button { flex: 1; padding: 14px; border: none; cursor: pointer; border-radius: 12px; font-weight: 600; background: transparent; color: var(--white); font-size: 13px; transition: 0.3s; }
         .menu button.active { background: var(--accent-green); color: #001f33; box-shadow: 0 0 15px var(--glow-green); }
-
         .search-section { background: rgba(0, 210, 157, 0.05); padding: 15px; border-radius: 15px; margin-bottom: 20px; display: none; border: 1px solid var(--accent-green); }
-        
         label { display: block; font-size: 10px; font-weight: 700; color: var(--accent-green); text-transform: uppercase; margin-top: 15px; margin-bottom: 5px; }
         input, select, textarea { width: 100%; padding: 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.3); color: white; font-size: 16px; outline: none; box-sizing: border-box; }
-        input:focus { border-color: var(--accent-green); }
-        
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .btn-main { width: 100%; padding: 18px; background: transparent; color: var(--accent-green); border: 2px solid var(--accent-green); border-radius: 50px; margin-top: 30px; font-size: 15px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
         .btn-main:hover { background: var(--accent-green); color: #001f33; box-shadow: 0 0 25px var(--accent-green); }
-        .btn-main:disabled { opacity: 0.5; cursor: not-allowed; }
-
         #status { text-align: center; margin-top: 20px; font-weight: 600; color: var(--accent-green); min-height: 20px; font-size: 12px; }
         @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
     </style>
@@ -46,19 +32,16 @@
     <div class="glow-1"></div><div class="glow-2"></div>
     <div class="container">
         <div class="header-area"><div class="logo-dot"></div><h1>GUOFUHEE CRM</h1></div>
-        
         <div class="menu">
             <button id="tabCad" class="active" onclick="toggleMode('create')">NOVO REGISTRO</button>
             <button id="tabAtt" onclick="toggleMode('update')">ATUALIZAR OP</button>
         </div>
-
         <div id="searchBar" class="search-section">
             <label>Localizar OP ou Empresa</label>
             <input list="listaDeOPs" id="idBusca" placeholder="Comece a digitar...">
             <datalist id="listaDeOPs"></datalist>
-            <button onclick="buscar()" class="btn-main" style="margin-top: 10px; padding: 10px;">BUSCAR DADOS</button>
+            <button onclick="buscar()" class="btn-main" style="margin-top: 10px; padding: 10px;">BUSCAR</button>
         </div>
-
         <form id="formEmpresa">
             <input type="hidden" name="action" id="actionInput" value="create">
             <div class="grid">
@@ -104,71 +87,42 @@
         </form>
         <div id="status"></div>
     </div>
-
     <script>
-        // --- COLOQUE SEU LINK ABAIXO ---
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKmVhPL-12Uuw4rPJ6S0HjSXM6-B-uu4nqVIKQjP3tIBMafqUDfC_ML7cAujC0MNFs/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxvq2Ta318KtQM8avgp0BDS0m6BlT8bStksQU4bAe2osG9s2dL_hZ3Z2p6rjZMPucWE/exec"; // <--- COLOQUE SEU LINK AQUI
 
-        window.onload = function() { 
-            gerarIDAutomatico(); 
-            carregarLista(); // Carrega a lista em background
-        };
+        window.onload = function() { sincronizar(); };
+
+        async function sincronizar() {
+            await gerarIDAutomatico();
+            await carregarLista();
+        }
 
         async function gerarIDAutomatico() {
             try {
-                const resp = await fetch(WEB_APP_URL + "?action=proxima&t=" + new Date().getTime());
-                const texto = await resp.text();
-                if (texto && !texto.includes("<!DOCTYPE")) {
-                    document.getElementById('f_id').value = texto.trim();
-                } else {
-                    setTimeout(gerarIDAutomatico, 2000);
-                }
-            } catch (e) {
-                setTimeout(gerarIDAutomatico, 3000);
-            }
+                const r = await fetch(WEB_APP_URL + "?action=proxima&t=" + Date.now());
+                const t = await r.text();
+                if(t && !t.includes("<")) document.getElementById('f_id').value = t.trim();
+                else setTimeout(gerarIDAutomatico, 2000);
+            } catch(e) { setTimeout(gerarIDAutomatico, 3000); }
         }
 
         async function carregarLista() {
             try {
-                const resp = await fetch(WEB_APP_URL + "?action=listar&t=" + new Date().getTime());
-                const texto = await resp.text();
-                const list = JSON.parse(texto);
-                const dl = document.getElementById('listaDeOPs');
-                dl.innerHTML = list.map(item => `<option value="${item}">`).join('');
-            } catch (e) { console.log("Aguardando servidor..."); }
-        }
-
-        function formatarMoeda(i) {
-            let v = i.value.replace(/\D/g,'');
-            v = (v/100).toFixed(2) + '';
-            v = v.replace(".", ",");
-            v = v.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
-            v = v.replace(/(\d)(\d{3}),/g, "$1.$2,");
-            i.value = "R$ " + v;
-        }
-
-        function toggleMode(mode) {
-            const isUpdate = mode === 'update';
-            document.getElementById('actionInput').value = mode;
-            document.getElementById('searchBar').style.display = isUpdate ? 'block' : 'none';
-            document.getElementById('tabAtt').className = isUpdate ? 'active' : '';
-            document.getElementById('tabCad').className = isUpdate ? '' : 'active';
-            if(!isUpdate) { 
-                document.getElementById('formEmpresa').reset(); 
-                gerarIDAutomatico(); 
-            } else {
-                carregarLista();
-            }
+                const r = await fetch(WEB_APP_URL + "?action=listar&t=" + Date.now());
+                const t = await r.text();
+                const list = JSON.parse(t);
+                document.getElementById('listaDeOPs').innerHTML = list.map(i => `<option value="${i}">`).join('');
+            } catch(e) { setTimeout(carregarLista, 5000); }
         }
 
         async function buscar() {
             let val = document.getElementById('idBusca').value;
             let id = val.includes(" - ") ? val.split(" - ")[0].trim() : val;
             if(!id) return;
-            document.getElementById('status').innerText = "PROCURANDO...";
+            document.getElementById('status').innerText = "BUSCANDO...";
             try {
-                const resp = await fetch(WEB_APP_URL + "?action=buscar&id=" + id + "&t=" + new Date().getTime());
-                const res = JSON.parse(await resp.text());
+                const r = await fetch(WEB_APP_URL + "?action=buscar&id=" + id + "&t=" + Date.now());
+                const res = JSON.parse(await r.text());
                 if(res.found) {
                     document.getElementById('f_id').value = id;
                     document.getElementById('f_name').value = res.companyName || "";
@@ -185,36 +139,36 @@
                     document.getElementById('f_deadline').value = res.deadline || "";
                     document.getElementById('f_drive').value = res.driveLink || "";
                     document.getElementById('f_note').value = res.note || "";
-                    document.getElementById('status').innerText = "✅ DADOS CARREGADOS";
-                } else {
-                    document.getElementById('status').innerText = "❌ NÃO ENCONTRADO";
+                    document.getElementById('status').innerText = "✅ CARREGADO";
                 }
-            } catch(e) { document.getElementById('status').innerText = "⚠️ ERRO NA BUSCA"; }
+            } catch(e) { document.getElementById('status').innerText = "❌ ERRO"; }
+        }
+
+        function formatarMoeda(i) {
+            let v = i.value.replace(/\D/g,'');
+            v = (v/100).toFixed(2).replace(".", ",").replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,").replace(/(\d)(\d{3}),/g, "$1.$2,");
+            i.value = v ? "R$ " + v : "";
+        }
+
+        function toggleMode(m) {
+            const isU = m === 'update';
+            document.getElementById('actionInput').value = m;
+            document.getElementById('searchBar').style.display = isU ? 'block' : 'none';
+            document.getElementById('tabAtt').className = isU ? 'active' : '';
+            document.getElementById('tabCad').className = isU ? '' : 'active';
+            if(!isU) { document.getElementById('formEmpresa').reset(); gerarIDAutomatico(); }
         }
 
         document.getElementById('formEmpresa').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSubmit');
-            btn.disabled = true;
-            document.getElementById('status').innerText = "ENVIANDO PARA PLANILHA...";
-            const dados = Object.fromEntries(new FormData(this).entries());
-            
+            const b = document.getElementById('btnSubmit'); b.disabled = true;
+            document.getElementById('status').innerText = "SALVANDO...";
             try {
-                await fetch(WEB_APP_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(dados)
-                });
-                document.getElementById('status').innerText = "✅ SALVO COM SUCESSO!";
-                if(document.getElementById('actionInput').value === 'create') { 
-                    this.reset(); 
-                    setTimeout(gerarIDAutomatico, 2000); 
-                }
-            } catch(e) {
-                document.getElementById('status').innerText = "❌ ERRO AO CONECTAR";
-            }
-            btn.disabled = false;
+                await fetch(WEB_APP_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(Object.fromEntries(new FormData(this))) });
+                document.getElementById('status').innerText = "✅ SALVO!";
+                if(document.getElementById('actionInput').value === 'create') { this.reset(); setTimeout(sincronizar, 2000); }
+            } catch(e) { document.getElementById('status').innerText = "❌ ERRO"; }
+            b.disabled = false;
         });
     </script>
 </body>
