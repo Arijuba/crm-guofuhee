@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GUOFUHEE CRM</title>
@@ -32,143 +31,121 @@
     <div class="glow-1"></div><div class="glow-2"></div>
     <div class="container">
         <div class="header-area"><div class="logo-dot"></div><h1>GUOFUHEE CRM</h1></div>
+        
         <div class="menu">
-            <button id="tabCad" class="active" onclick="toggleMode('create')">NOVO REGISTRO</button>
-            <button id="tabAtt" onclick="toggleMode('update')">ATUALIZAR OP</button>
+            <button id="t1" class="active" onclick="mode('create')">NOVO REGISTRO</button>
+            <button id="t2" onclick="mode('update')">ATUALIZAR OP</button>
         </div>
+
         <div id="searchBar" class="search-section">
             <label>Localizar OP ou Empresa</label>
-            <input list="listaDeOPs" id="idBusca" placeholder="Comece a digitar...">
+            <input list="listaDeOPs" id="idBusca" placeholder="Digite para buscar...">
             <datalist id="listaDeOPs"></datalist>
-            <button onclick="buscar()" class="btn-main" style="margin-top: 10px; padding: 10px;">BUSCAR</button>
+            <button onclick="buscar()" class="btn-main" style="margin-top: 10px; padding: 10px;">BUSCAR DADOS</button>
         </div>
-        <form id="formEmpresa">
-            <input type="hidden" name="action" id="actionInput" value="create">
+
+        <form id="crmForm">
+            <input type="hidden" name="action" id="act" value="create">
             <div class="grid">
-                <div><label>Opportunity ID</label><input type="text" name="id" id="f_id" readonly placeholder="Carregando..."></div>
+                <div><label>Opportunity ID</label><input type="text" name="id" id="f_id" readonly placeholder="Sincronizando..."></div>
                 <div><label>Status</label>
                     <select name="status" id="f_status">
-                        <option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal in Preparation">Proposal in Preparation</option><option value="Dealing">Dealing</option><option value="Won">Won</option><option value="Lost">Lost</option>
+                        <option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Dealing">Dealing</option><option value="Won">Won</option><option value="Lost">Lost</option>
                     </select>
                 </div>
             </div>
             <label>Company Name</label><input type="text" name="companyName" id="f_name" required>
-            <label>Priority</label>
-            <select name="priority" id="f_priority">
-                <option value="Urgente e Importante">Urgente e Importante</option><option value="Importante, não urgente">Importante, não urgente</option><option value="Urgente, não importante">Urgente, não importante</option><option value="Eliminar">Eliminar</option>
-            </select>
             <div class="grid">
                 <div><label>Owner</label><input type="text" name="owner" id="f_owner"></div>
-                <div><label>Our group</label><input type="text" name="ourGroup" id="f_group"></div>
+                <div><label>State (UF)</label><input type="text" name="state" id="f_state"></div>
             </div>
             <div class="grid">
-                <div><label>State (UF)</label>
-                    <select name="state" id="f_state">
-                        <option value="">Selecione...</option><option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option><option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option><option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option><option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option><option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option><option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option><option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option><option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
-                    </select>
-                </div>
                 <div><label>Segment</label><input type="text" name="segment" id="f_segment"></div>
+                <div><label>Value</label><input type="text" name="estimatedValue" id="f_val" oninput="moeda(this)"></div>
             </div>
-            <label>Business interest</label>
-            <select name="businessInterest" id="f_interest">
-                <option value="FAD HGS">FAD HGS</option><option value="FAD HRS">FAD HRS</option><option value="FAD HGS & HRS">FAD HGS & HRS</option>
-            </select>
             <div class="grid">
-                <div><label>Estimated Value</label><input type="text" name="estimatedValue" id="f_value" oninput="formatarMoeda(this)"></div>
                 <div><label>Last Interaction</label><input type="date" name="lastInteraction" id="f_last"></div>
+                <div><label>Deadline</label><input type="date" name="deadline" id="f_dead"></div>
             </div>
-            <div class="grid">
-                <div><label>Next Action</label><input type="text" name="nextAction" id="f_next"></div>
-                <div><label>Deadline</label><input type="date" name="deadline" id="f_deadline"></div>
-            </div>
-            <label>Drive's link</label><input type="url" name="driveLink" id="f_drive" placeholder="https://...">
+            <label>Drive Link</label><input type="url" name="driveLink" id="f_drive">
             <label>Note</label><textarea name="note" id="f_note" rows="3"></textarea>
-            <button type="submit" class="btn-main" id="btnSubmit">SALVAR NA PLANILHA</button>
+            <button type="submit" class="btn-main" id="btn">SALVAR NA PLANILHA</button>
         </form>
-        <div id="status"></div>
+        <div id="status">Iniciando...</div>
     </div>
+
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxvq2Ta318KtQM8avgp0BDS0m6BlT8bStksQU4bAe2osG9s2dL_hZ3Z2p6rjZMPucWE/exec"; // <--- COLOQUE SEU LINK AQUI
+        const URL = "https://script.google.com/macros/s/AKfycbzRcaxMbybD1foVAjVXrN5I9JrHSD1aOxIfwMKIzWJPMA-jCJ9u-AQx8nHjh6Mkpfpq/exec"; // <--- COLOQUE O LINK /exec AQUI
 
-        window.onload = function() { sincronizar(); };
+        window.onload = () => { refresh(); list(); };
 
-        async function sincronizar() {
-            await gerarIDAutomatico();
-            await carregarLista();
+        async function refresh() {
+            try {
+                const r = await fetch(URL + "?action=proxima&t=" + Date.now());
+                const t = await r.text();
+                if(t.includes("<")) setTimeout(refresh, 2000);
+                else { document.getElementById('f_id').value = t.trim(); document.getElementById('status').innerText = "Sistema Online"; }
+            } catch(e) { setTimeout(refresh, 3000); }
         }
 
-        async function gerarIDAutomatico() {
+        async function list() {
             try {
-                const r = await fetch(WEB_APP_URL + "?action=proxima&t=" + Date.now());
-                const t = await r.text();
-                if(t && !t.includes("<")) document.getElementById('f_id').value = t.trim();
-                else setTimeout(gerarIDAutomatico, 2000);
-            } catch(e) { setTimeout(gerarIDAutomatico, 3000); }
+                const r = await fetch(URL + "?action=listar&t=" + Date.now());
+                const d = JSON.parse(await r.text());
+                document.getElementById('listaDeOPs').innerHTML = d.map(i => `<option value="${i}">`).join('');
+            } catch(e) {}
         }
 
-        async function carregarLista() {
-            try {
-                const r = await fetch(WEB_APP_URL + "?action=listar&t=" + Date.now());
-                const t = await r.text();
-                const list = JSON.parse(t);
-                document.getElementById('listaDeOPs').innerHTML = list.map(i => `<option value="${i}">`).join('');
-            } catch(e) { setTimeout(carregarLista, 5000); }
+        function mode(m) {
+            const isU = m === 'update';
+            document.getElementById('act').value = m;
+            document.getElementById('searchBar').style.display = isU ? 'block' : 'none';
+            document.getElementById('t1').className = isU ? '' : 'active';
+            document.getElementById('t2').className = isU ? 'active' : '';
+            if(!isU) { document.getElementById('crmForm').reset(); refresh(); }
         }
 
         async function buscar() {
-            let val = document.getElementById('idBusca').value;
-            let id = val.includes(" - ") ? val.split(" - ")[0].trim() : val;
-            if(!id) return;
-            document.getElementById('status').innerText = "BUSCANDO...";
+            let v = document.getElementById('idBusca').value;
+            let id = v.split(" - ")[0].trim();
+            document.getElementById('status').innerText = "Buscando...";
             try {
-                const r = await fetch(WEB_APP_URL + "?action=buscar&id=" + id + "&t=" + Date.now());
+                const r = await fetch(URL + "?action=buscar&id="+id);
                 const res = JSON.parse(await r.text());
                 if(res.found) {
                     document.getElementById('f_id').value = id;
-                    document.getElementById('f_name').value = res.companyName || "";
-                    document.getElementById('f_priority').value = res.priority || "";
-                    document.getElementById('f_owner').value = res.owner || "";
-                    document.getElementById('f_group').value = res.ourGroup || "";
-                    document.getElementById('f_status').value = res.status || "Lead";
-                    document.getElementById('f_state').value = res.state || "";
-                    document.getElementById('f_segment').value = res.segment || "";
-                    document.getElementById('f_interest').value = res.businessInterest || "";
-                    document.getElementById('f_value').value = res.estimatedValue || "";
-                    document.getElementById('f_last').value = res.lastInteraction || "";
-                    document.getElementById('f_next').value = res.nextAction || "";
-                    document.getElementById('f_deadline').value = res.deadline || "";
-                    document.getElementById('f_drive').value = res.driveLink || "";
-                    document.getElementById('f_note').value = res.note || "";
-                    document.getElementById('status').innerText = "✅ CARREGADO";
+                    document.getElementById('f_name').value = res.companyName;
+                    document.getElementById('f_owner').value = res.owner;
+                    document.getElementById('f_status').value = res.status;
+                    document.getElementById('f_state').value = res.state;
+                    document.getElementById('f_segment').value = res.segment;
+                    document.getElementById('f_val').value = res.estimatedValue;
+                    document.getElementById('f_last').value = res.lastInteraction;
+                    document.getElementById('f_dead').value = res.deadline;
+                    document.getElementById('f_drive').value = res.driveLink;
+                    document.getElementById('f_note').value = res.note;
+                    document.getElementById('status').innerText = "✅ Dados Carregados";
                 }
-            } catch(e) { document.getElementById('status').innerText = "❌ ERRO"; }
+            } catch(e) { document.getElementById('status').innerText = "❌ Erro na busca"; }
         }
 
-        function formatarMoeda(i) {
+        function moeda(i) {
             let v = i.value.replace(/\D/g,'');
             v = (v/100).toFixed(2).replace(".", ",").replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,").replace(/(\d)(\d{3}),/g, "$1.$2,");
             i.value = v ? "R$ " + v : "";
         }
 
-        function toggleMode(m) {
-            const isU = m === 'update';
-            document.getElementById('actionInput').value = m;
-            document.getElementById('searchBar').style.display = isU ? 'block' : 'none';
-            document.getElementById('tabAtt').className = isU ? 'active' : '';
-            document.getElementById('tabCad').className = isU ? '' : 'active';
-            if(!isU) { document.getElementById('formEmpresa').reset(); gerarIDAutomatico(); }
-        }
-
-        document.getElementById('formEmpresa').addEventListener('submit', async function(e) {
+        document.getElementById('crmForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const b = document.getElementById('btnSubmit'); b.disabled = true;
-            document.getElementById('status').innerText = "SALVANDO...";
+            document.getElementById('btn').disabled = true;
+            document.getElementById('status').innerText = "Enviando...";
             try {
-                await fetch(WEB_APP_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(Object.fromEntries(new FormData(this))) });
-                document.getElementById('status').innerText = "✅ SALVO!";
-                if(document.getElementById('actionInput').value === 'create') { this.reset(); setTimeout(sincronizar, 2000); }
-            } catch(e) { document.getElementById('status').innerText = "❌ ERRO"; }
-            b.disabled = false;
+                await fetch(URL, { method: "POST", mode: "no-cors", body: JSON.stringify(Object.fromEntries(new FormData(this))) });
+                document.getElementById('status').innerText = "✅ Salvo com Sucesso!";
+                this.reset();
+                setTimeout(() => { mode('create'); refresh(); list(); }, 2000);
+            } catch(e) { document.getElementById('status').innerText = "❌ Erro ao Salvar"; }
+            document.getElementById('btn').disabled = false;
         });
     </script>
 </body>
